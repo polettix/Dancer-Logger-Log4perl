@@ -86,7 +86,21 @@ e.g. the stealth loggers in case of a simplified interface.
 =head1 CONFIGURATION
 
 The configuration capabilities vary depending on the underlying library
-you have.
+you have, even though the following configurations are common:
+
+=over
+
+=item B<< no_init >>
+
+skip the initialisation phase of the logging module, assuming that it
+is performed elsewhere.
+
+=item B<< tiny >>
+
+allows you to decide whether L<Log::Log4perl> (when set to a false value) or
+L<Log::Log4perl::Tiny> (when set to a true value) should be used.
+
+=back
 
 =head2 Log::Log4perl
 
@@ -95,7 +109,7 @@ to pass a configuration:
 
 =over
 
-=item *
+=item B<< config_file >>
 
 via a configuration file, using the C<config_file> option:
 
@@ -103,7 +117,7 @@ via a configuration file, using the C<config_file> option:
    log4perl:
       config_file: log4perl.conf
 
-=item *
+=item B<< config >>
 
 via a straight configuration text, using the C<config> option:
 
@@ -120,8 +134,6 @@ via a straight configuration text, using the C<config> option:
 
 =back
 
-You can also decide to perform the configuration phase by yourself, directly
-inside the program. In this case, the C<no_init> option should come handy.
 
 =head2 Log::Log4perl::Tiny
 
@@ -129,29 +141,31 @@ If all you have is L<Log::Log4perl::Tiny>, you can set some parameters:
 
 =over
 
-=item *
+=item B<< level >>
 
 the log C<level>
 
-=item *
+   logger: log4perl
+   log4perl:
+      tiny: 1
+      level: INFO
+
+=item B<< format >>
 
 the log C<format> (aliased to C<layout> as well)
 
+   logger: log4perl
+   log4perl:
+      tiny: 1
+      format: [%p] %m%n
+
 =back
 
-Again, you can decide to perform your own initialisation, in which case it
-is adviseable to use the C<no_init> option.
-
-
-=head1 INTERFACE
-
-=head2 Logging Facilities
+=begin hideme
 
 =over
 
 =item B<< new >>
-
-the object constructor.
 
 =item B<< debug >>
 
@@ -161,8 +175,6 @@ the object constructor.
 
 =item B<< error >>
 
-The four methods that a L<Dancer> logger must have.
-
-
-
 =back
+
+=end hideme
