@@ -1,4 +1,7 @@
 {{$NEXT}}
+   - better documentation, covered all options
+
+0.7.0_02  2011-03-11 02:19:19 Europe/Rome
    - added dependency upon Dancer
 
 0.7.0_01  2011-03-11 01:57:11 Europe/Rome
