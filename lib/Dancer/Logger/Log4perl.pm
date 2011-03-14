@@ -178,3 +178,132 @@ the log C<format> (aliased to C<layout> as well)
 =back
 
 =end hideme
+
+=head1 EXAMPLES
+
+All examples below assume that you have your L<Log::Log4perl> initialisation
+stuff inside a file called F<log4perl.conf>, e.g. something along the
+following lines:
+
+   log4perl.logger = INFO, Screen
+   log4perl.appender.Screen = Log::Log4perl::Appender::Screen
+   log4perl.appender.Screen.stderr = 1
+   log4perl.appender.Screen.stdout = 0
+   log4perl.appender.Screen.layout = Log::Log4perl::Layout::PatternLayout
+   log4perl.appender.Screen.layout.ConversionPattern = [%d] [%-5p] %m%n
+
+The above initialisation text is actually what you get by default.
+
+=head2 Log::Log4perl, Automatic Initialisation, Dancer Logging Interface
+
+In this case you'll probably want to let the module handle the initialisation
+and forget about L<Log::Log4perl> in your code. In the L<Dancer> configuration
+file:
+
+   # config.yml
+   logger: log4perl
+   log4perl:
+      config_file: log4perl.conf
+
+In your code:
+
+   # somewhere...
+   get '/please/warn' => sub {
+      warning "ouch!"; # good ol' Dancer warning
+      return ':-)';
+   };
+
+
+=head2 Log::Log4perl, Manual Initialisation, Log::Log4perl Stealth Interface
+
+If you want to use L<Log::Log4perl>'s stealth interface, chances are you
+also want to avoid a full configuration file and rely upon C<easy_init()>.
+In this case, chances are that you'll perform initialisation by your own,
+so your configuration file will be bare bones:
+
+   # config.yml
+   logger: log4perl
+   log4perl:
+      no_init: 1
+
+and your code will contain all the meat:
+
+   use Log::Log4perl qw( :easy );
+   Log::Log4perl->easy_init($INFO);
+   get '/please/warn' => sub {
+      WARN 'ouch!'; # Log::Log4perl way of warning
+      return ';-)';
+   };
+
+
+=head2 Log::Log4perl, Whatever Initialisation, Whatever Interface
+
+Whatever the method you use to initialise the logger (but take care to
+initialis it once and only once, see L<Log::Log4perl>), you can always
+use both L<Dancer> and L<Log::Log4perl> functions:
+
+   use Log::Log4perl qw( :easy );
+   get '/please/warn/2/times' => sub {
+      warning 'ouch!'; # Dancer style
+      WARN    'OUCH!'; # Log::Log4perl style
+      return ':-D';
+   };
+
+If you don't like either functional interface, and prefer to stick to
+L<Log::Log4perl>'s object-oriented interface to avoid collisions in
+function names:
+
+   use Log::Log4perl ();
+   get '/please/warn/2/times' => sub {
+      get_logger()->warn('ouch!'); # Log::Log4perl, OO way
+      return 'B-)';
+   };
+
+Well, you get the idea... just peruse L<Log::Log4perl> documentation for
+more!
+
+=head2 Log::Log4perl::Tiny, Automatic Initialisation, Any Interface
+
+If you prefer to use L<Log::Log4perl::Tiny> you can put the relevant
+options directly inside the configuration file:
+
+   # config.yml
+   logger: log4perl
+   log4perl:
+      tiny: 1
+      level: DEBUG
+      format:  [%p] %m%n
+
+At this point, you can import the relevant methods in your code and use
+them as you would with L<Log::Log4perl>:
+
+   use Log::Log4perl::Tiny qw( :easy );
+   get '/please/warn' => sub {
+      WARN 'ouch!'; # Log::Log4perl(::Tiny) way of warning
+      # you can also use Dancer's warning here...
+      warning 'OUCH!';
+      return ';-)';
+   };
+
+=head2 Log::Log4perl::Tiny, Any Initialisation, Any Interface
+
+As an alternative to the previous example, you can also limit the
+configuration file to a minimum:
+
+   # config.yml
+   logger: log4perl
+   log4perl:
+      tiny: 1
+
+and initialise the logging library inside the code:
+
+   use Log::Log4perl::Tiny qw( :easy );
+   Log::Log4perl->easy_init($INFO);
+   get '/please/warn' => sub {
+      WARN 'ouch!'; # Log::Log4perl(::Tiny) way of warning
+      # you can also use Dancer's warning here...
+      warning 'OUCH!';
+      return ';-)';
+   };
+
+
