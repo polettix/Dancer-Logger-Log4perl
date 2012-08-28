@@ -1,4 +1,6 @@
 {{$NEXT}}
+   - fixed documentation bug https://rt.cpan.org/Ticket/Display.html?id=79258
+   - added pointers for support and contributions
 
 0.8.0     2011-03-14 23:08:46 Europe/Rome
 

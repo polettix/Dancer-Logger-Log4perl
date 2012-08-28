@@ -6,12 +6,12 @@ Dancer::Logger::Log4perl - Dancer adapter for Log::Log4perl
 SYNOPSIS
 ========
 
-    # In your config.yml
+In your config.yml
     logger: log4perl
     log4perl:
        config_file: log4perl.conf
 
-    # In your log4perl.conf
+In your log4perl.conf
     log4perl.rootLogger              = DEBUG, LOG1
     log4perl.appender.LOG1           = Log::Log4perl::Appender::File
     log4perl.appender.LOG1.filename  = /var/log/mylog.log

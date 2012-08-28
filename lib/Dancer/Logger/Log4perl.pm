@@ -50,12 +50,14 @@ __END__
 
 =head1 SYNOPSIS
 
-   # In your config.yml
+In your config.yml
+
    logger: log4perl
    log4perl:
       config_file: log4perl.conf
 
-   # In your log4perl.conf
+In your log4perl.conf
+
    log4perl.rootLogger              = DEBUG, LOG1
    log4perl.appender.LOG1           = Log::Log4perl::Appender::File
    log4perl.appender.LOG1.filename  = /var/log/mylog.log
@@ -307,3 +309,25 @@ and initialise the logging library inside the code:
    };
 
 
+=head1 SUPPORT
+
+If you find a bug, have a comment or (constructive) criticism you have
+different options:
+
+=over
+
+=item -
+
+just write to the L</AUTHOR>
+
+=item -
+
+open a bug request on the relevant RT queue at
+https://rt.cpan.org/Public/Dist/Display.html?Name=Dancer-Logger-Log4perl
+
+=item -
+
+open an issue or propose a patch on GitHub at
+https://github.com/polettix/Dancer-Logger-Log4perl
+
+=back
