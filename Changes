@@ -1,4 +1,6 @@
 {{$NEXT}}
+
+0.8.1     2012-08-28 12:45:40 Europe/Rome
    - fixed documentation bug https://rt.cpan.org/Ticket/Display.html?id=79258
    - added pointers for support and contributions
 
