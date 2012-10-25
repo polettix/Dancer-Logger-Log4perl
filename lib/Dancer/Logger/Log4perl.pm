@@ -42,6 +42,7 @@ sub new {
 
 sub core    { ${$_[0]}->info($_[1]) }
 sub debug   { ${$_[0]}->debug($_[1]) }
+sub info    { ${$_[0]}->info($_[1]) }
 sub warning { ${$_[0]}->warn($_[1]) }
 sub error   { ${$_[0]}->error($_[1]) }
 
