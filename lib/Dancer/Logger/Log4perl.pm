@@ -220,8 +220,8 @@ In your code:
 
 If you want to use L<Log::Log4perl>'s stealth interface, chances are you
 also want to avoid a full configuration file and rely upon C<easy_init()>.
-In this case, chances are that you'll perform initialisation by your own,
-so your configuration file will be bare bones:
+In this case, you will probably want to perform the initialisation by your
+own, so your configuration file will be bare bones:
 
    # config.yml
    logger: log4perl
@@ -241,7 +241,7 @@ and your code will contain all the meat:
 =head2 Log::Log4perl, Whatever Initialisation, Whatever Interface
 
 Whatever the method you use to initialise the logger (but take care to
-initialis it once and only once, see L<Log::Log4perl>), you can always
+initialise it once and only once, see L<Log::Log4perl>), you can always
 use both L<Dancer> and L<Log::Log4perl> functions:
 
    use Log::Log4perl qw( :easy );
