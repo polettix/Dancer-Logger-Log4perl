@@ -67,6 +67,9 @@ sub _log {
         $level = "info";
     }
 
+    # Adjust the caller level since we've introduced additional levels.
+    local $Log::Log4perl::caller_depth = $Log::Log4perl::caller_depth + 3;
+
     $self->{logger}->$level($self->format_message($format_level => $message));
 }
 
