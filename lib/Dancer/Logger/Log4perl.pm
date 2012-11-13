@@ -59,12 +59,12 @@ sub _log {
     $level = 'warn' if $level eq 'warning';
     my $format_level = $level;
 
-    # Map Dancer's "core" messages to "info" but only if Dancer's
-    # log setting is "core".
+    # Map Dancer's "core" messages to "debug" but output only if
+    # Dancer's log setting is "core".
     my $log_setting = Dancer::Config::setting('log') || "";
     if ( $level eq "core" ) {
         return unless ( $log_setting eq "core" );
-        $level = "info";
+        $level = "debug";
     }
 
     # Adjust the caller level since we've introduced additional levels.
@@ -120,7 +120,7 @@ C<logger_format> is still processed and becomes C<%m> in L<Log4perl>'s format
 placeholders. This allows you to pass L<Dancer> placeholders that aren't
 available as L<Log4perl> placeholders.
 
-L<Dancer>'s C<core> level messages are passed to L<Log4perl> as level C<info>
+L<Dancer>'s C<core> level messages are passed to L<Log4perl> as level C<debug>
 but will not be passed unless L<Dancer>'s C<log> config is C<core>.
 
 C<log> should be set a lower priority than the lowest priority as set in your
