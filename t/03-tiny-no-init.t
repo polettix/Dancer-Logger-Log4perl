@@ -8,15 +8,15 @@ BEGIN {
    eval 'use Log::Log4perl::Tiny qw( :subs )';
    plan skip_all => 'Log::Log4perl::Tiny required for basic testing' if $@;
 }
-#plan 'no_plan';
-plan tests => 17;
+# plan 'no_plan';
+plan tests => 21;
 
 use Dancer ':syntax';
 use Dancer::Test;
 
 my $logger = get_logger();
 $logger->layout('[%p] %m%n');
-$logger->level('DEBUG');
+$logger->level('TRACE');
 
 ok(open(my $fh, '>', \my $collector), "open()");
 $logger->fh($fh);
@@ -32,7 +32,7 @@ ok(get('/debug' => sub { DEBUG 'debug-whatever'; return 'whatever' }),
 ok(
    get(
       '/core' =>
-        sub { INFO 'core-whatever'; return 'whatever' }
+        sub { TRACE 'core-whatever'; return 'whatever' }
    ),
    'route addition'
 );
@@ -44,8 +44,10 @@ ok(
 );
 ok(get('/error' => sub { ERROR 'error-whatever'; return 'whatever' }),
    'route addition');
+ok(get('/info' => sub { INFO 'info-whatever'; return 'whatever' }),
+   'route addition');
 
-for my $level (qw( debug core warning error )) {
+for my $level (qw( debug core warning error info )) {
    my $route = "/$level";
    route_exists [GET => $route];
    response_content_is([GET => $route], 'whatever');

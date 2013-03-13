@@ -6,12 +6,12 @@ use warnings;
 use Test::More import => ['!pass'];
 eval 'use Log::Log4perl';
 plan skip_all => 'Log::Log4perl required for full testing' if $@;
-#plan 'no_plan';
-plan tests => 17;
+# plan 'no_plan';
+plan tests => 21;
 
 my $logfile = __FILE__ . '.log';
 my $config = "
-log4perl.rootLogger              = DEBUG, LOG1
+log4perl.rootLogger              = TRACE, LOG1
 log4perl.appender.LOG1           = Log::Log4perl::Appender::File
 log4perl.appender.LOG1.filename  = $logfile
 log4perl.appender.LOG1.mode      = append
@@ -47,8 +47,10 @@ ok(
 );
 ok(get('/error' => sub { error 'error-whatever'; return 'whatever' }),
    'route addition');
+ok(get('/info' => sub { info 'info-whatever'; return 'whatever' }),
+   'route addition');
 
-for my $level (qw( debug core warning error )) {
+for my $level (qw( debug core warning error info )) {
    my $route = "/$level";
    route_exists [GET => $route];
    response_content_is([GET => $route], 'whatever');
@@ -59,7 +61,7 @@ my $collector = do {
    <>;
 };
 
-for my $level (qw( debug core warning error )) {
+for my $level (qw( debug core warning error info )) {
    like($collector, qr{$level-whatever}, 'log line is correct');
 }
 

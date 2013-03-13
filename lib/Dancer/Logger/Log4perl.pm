@@ -7,7 +7,7 @@ use Dancer::Config       ();
 use Dancer::ModuleLoader ();
 
 my $default_config = <<'END_OF_CONFIG';
-log4perl.logger = INFO, Screen
+log4perl.logger = TRACE, Screen
 log4perl.appender.Screen = Log::Log4perl::Appender::Screen
 log4perl.appender.Screen.stderr = 1
 log4perl.appender.Screen.stdout = 0
@@ -40,7 +40,8 @@ sub new {
    return bless \$logger, $package;
 } ## end sub new
 
-sub core    { ${$_[0]}->info($_[1]) }
+sub core    { ${$_[0]}->trace($_[1]) }
+sub info    { ${$_[0]}->info($_[1]) }
 sub debug   { ${$_[0]}->debug($_[1]) }
 sub warning { ${$_[0]}->warn($_[1]) }
 sub error   { ${$_[0]}->error($_[1]) }

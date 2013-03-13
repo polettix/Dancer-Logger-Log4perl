@@ -6,8 +6,8 @@ use warnings;
 use Test::More import => ['!pass'];
 eval 'use Log::Log4perl::Tiny';
 plan skip_all => 'Log::Log4perl::Tiny required for basic testing' if $@;
-#plan 'no_plan';
-plan tests => 17;
+# plan 'no_plan';
+plan tests => 21;
 
 use Dancer ':syntax';
 use Dancer::Test;
@@ -18,7 +18,7 @@ setting log4perl => {
    tiny   => 1,
    fh     => $fh,
    layout => '[%p] %m%n',
-   level => 'DEBUG',
+   level => 'TRACE',
 };
 setting logger => 'log4perl';
 
@@ -39,8 +39,10 @@ ok(
 );
 ok(get('/error' => sub { error 'error-whatever'; return 'whatever' }),
    'route addition');
+ok(get('/info' => sub { info 'info-whatever'; return 'whatever' }),
+   'route addition');
 
-for my $level (qw( debug core warning error )) {
+for my $level (qw( debug core warning error info )) {
    my $route = "/$level";
    route_exists [GET => $route];
    response_content_is([GET => $route], 'whatever');
