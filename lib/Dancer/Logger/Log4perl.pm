@@ -7,7 +7,7 @@ use Dancer::Config       ();
 use Dancer::ModuleLoader ();
 
 my $default_config = <<'END_OF_CONFIG';
-log4perl.logger = INFO, Screen
+log4perl.logger = TRACE, Screen
 log4perl.appender.Screen = Log::Log4perl::Appender::Screen
 log4perl.appender.Screen.stderr = 1
 log4perl.appender.Screen.stdout = 0
