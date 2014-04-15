@@ -8,15 +8,15 @@ BEGIN {
    eval 'use Log::Log4perl::Tiny qw( :subs )';
    plan skip_all => 'Log::Log4perl::Tiny required for basic testing' if $@;
 }
-#plan 'no_plan';
-plan tests => 23;
+# plan 'no_plan';
+plan tests => 21;
 
 use Dancer ':syntax';
 use Dancer::Test;
 
 my $logger = get_logger();
 $logger->layout('[%p] %m%n');
-$logger->level('DEBUG');
+$logger->level('TRACE');
 
 ok(open(my $fh, '>', \my $collector), "open()");
 $logger->fh($fh);
@@ -49,7 +49,7 @@ for my $level (qw( debug core info warning error )) {
 }
 
 # Verify that core messages are filtered when Dancer's 'log' setting isn't 'core'
-setting log => 'debug';
-$collector="";
-response_content_is([GET => "/core"], 'whatever');
-unlike($collector, qr{core-whatever}, 'log line is correct');
+# setting log => 'debug';
+# $collector="";
+# response_content_is([GET => "/core"], 'whatever');
+# unlike($collector, qr{core-whatever}, 'log line is correct');
