@@ -13,7 +13,7 @@ use Dancer::Config       ();
 use Dancer::ModuleLoader ();
 
 my $default_config = <<'END_OF_CONFIG';
-log4perl.logger = INFO, Screen
+log4perl.logger = ALL, Screen
 log4perl.appender.Screen = Log::Log4perl::Appender::Screen
 log4perl.appender.Screen.stderr = 1
 log4perl.appender.Screen.stdout = 0
@@ -27,6 +27,7 @@ sub init {
 
     my $conf  = Dancer::Config::setting('log4perl');
     my $class = $conf->{tiny} ? 'Log::Log4perl::Tiny' : 'Log::Log4perl';
+    $self->{class} = $class;
 
     unless ( Dancer::ModuleLoader->require($class) ) {
         carp "unable to load $class";
@@ -57,18 +58,11 @@ sub _log {
     my ($self, $level, $message) = @_;
 
     $level = 'warn' if $level eq 'warning';
+    $level = 'trace' if $level eq 'core';
     my $format_level = $level;
 
-    # Map Dancer's "core" messages to "debug" but output only if
-    # Dancer's log setting is "core".
-    my $log_setting = Dancer::Config::setting('log') || "";
-    if ( $level eq "core" ) {
-        return unless ( $log_setting eq "core" );
-        $level = "debug";
-    }
-
-    # Adjust the caller level since we've introduced additional levels.
-    local $Log::Log4perl::caller_depth = $Log::Log4perl::caller_depth + 3;
+    # Adjust the caller level since we've introduced additional levels. Does not apply to Tiny module.
+    local $Log::Log4perl::caller_depth = $Log::Log4perl::caller_depth + 3 if $self->{class} eq 'Log::Log4perl';
 
     $self->{logger}->$level($self->format_message($format_level => $message));
 }
