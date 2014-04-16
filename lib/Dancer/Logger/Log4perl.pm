@@ -1,13 +1,19 @@
 package Dancer::Logger::Log4perl;
 
+#
 # ABSTRACT: Dancer adapter for Log::Log4perl
+#
 
 use strict;
+use warnings;
+use Carp;
+use base 'Dancer::Logger::Abstract';
+
 use Dancer::Config       ();
 use Dancer::ModuleLoader ();
 
 my $default_config = <<'END_OF_CONFIG';
-log4perl.logger = INFO, Screen
+log4perl.logger = ALL, Screen
 log4perl.appender.Screen = Log::Log4perl::Appender::Screen
 log4perl.appender.Screen.stderr = 1
 log4perl.appender.Screen.stdout = 0
@@ -15,35 +21,51 @@ log4perl.appender.Screen.layout = Log::Log4perl::Layout::PatternLayout
 log4perl.appender.Screen.layout.ConversionPattern = [%d] [%-5p] %m%n
 END_OF_CONFIG
 
-sub new {
-   my $package = shift;
-   my $conf    = Dancer::Config::setting('log4perl');
-   my $class   = $conf->{tiny} ? 'Log::Log4perl::Tiny' : 'Log::Log4perl';
-   Dancer::ModuleLoader->require($class) or return;
-   if (!$conf->{no_init}) {
-      if ($conf->{tiny}) {
-         my $logger = $class->get_logger();
-         for my $accessor (qw( fh level layout format )) {
-            $logger->$accessor($conf->{$accessor})
-              if exists $conf->{$accessor};
-         }
-      } ## end if ($conf->{tiny})
-      else {
-         my $l4p_conf =
-             exists $conf->{config_file} ? $conf->{config_file}
-           : exists $conf->{config}      ? \$conf->{config}
-           :                               \$default_config;
-         Log::Log4perl::init($l4p_conf);
-      } ## end else [ if ($conf->{tiny})
-   } ## end if (!$conf->{no_init})
-   my $logger = $class->get_logger();
-   return bless \$logger, $package;
-} ## end sub new
+sub init {
+    my $self = shift;
+    $self->SUPER::init(@_);
 
-sub core    { ${$_[0]}->info($_[1]) }
-sub debug   { ${$_[0]}->debug($_[1]) }
-sub warning { ${$_[0]}->warn($_[1]) }
-sub error   { ${$_[0]}->error($_[1]) }
+    my $conf  = Dancer::Config::setting('log4perl');
+    my $class = $conf->{tiny} ? 'Log::Log4perl::Tiny' : 'Log::Log4perl';
+    $self->{class} = $class;
+
+    unless ( Dancer::ModuleLoader->require($class) ) {
+        carp "unable to load $class";
+        return;
+    }
+
+    if ( ! $conf->{no_init} ) {
+        if ( $conf->{tiny} ) {
+            my $logger = $class->get_logger();
+            for my $accessor (qw( fh level layout format )) {
+                if ( exists $conf->{$accessor} ) {
+                    $logger->$accessor($conf->{$accessor});
+                }
+            }
+        } else {
+            my $l4p_conf =
+                  exists $conf->{config_file} ? $conf->{config_file}
+                : exists $conf->{config}      ? \$conf->{config}
+                :                               \$default_config;
+            Log::Log4perl::init($l4p_conf);
+        }
+    }
+
+    $self->{logger} = $class->get_logger();
+}
+
+sub _log {
+    my ($self, $level, $message) = @_;
+
+    $level = 'warn' if $level eq 'warning';
+    $level = 'trace' if $level eq 'core';
+    my $format_level = $level;
+
+    # Adjust the caller level since we've introduced additional levels. Does not apply to Tiny module.
+    local $Log::Log4perl::caller_depth = $Log::Log4perl::caller_depth + 3 if $self->{class} eq 'Log::Log4perl';
+
+    $self->{logger}->$level($self->format_message($format_level => $message));
+}
 
 1;
 __END__
@@ -84,6 +106,20 @@ the initialisation.
 After initialisation, you can decide to use L<Dancer>'s functions or
 the ones provided by either L<Log::Log4perl> or L<Log::Log4perl::Tiny>,
 e.g. the stealth loggers in case of a simplified interface.
+
+Note that L<Dancer>'s C<log> and C<logger_format> options are still honored,
+which means you need to be aware of the following:
+
+C<logger_format> is still processed and becomes C<%m> in L<Log4perl>'s format
+placeholders. This allows you to pass L<Dancer> placeholders that aren't
+available as L<Log4perl> placeholders.
+
+L<Dancer>'s C<core> level messages are passed to L<Log4perl> as level C<debug>
+but will not be passed unless L<Dancer>'s C<log> config is C<core>.
+
+C<log> should be set a lower priority than the lowest priority as set in your
+L<Log4perl> configuration. If it isn't, L<Dancer::Logger::Abstract> will not
+pass the message to L<Log4perl>.
 
 =head1 CONFIGURATION
 
@@ -171,7 +207,7 @@ the log C<format> (aliased to C<layout> as well)
 
 =item B<< debug >>
 
-=item B<< core >>
+=item B<< info >>
 
 =item B<< warning >>
 
