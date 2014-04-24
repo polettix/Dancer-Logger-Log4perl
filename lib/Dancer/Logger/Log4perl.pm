@@ -75,6 +75,7 @@ __END__
 In your config.yml
 
    logger: log4perl
+   log: core
    log4perl:
       config_file: log4perl.conf
 
@@ -114,7 +115,7 @@ C<logger_format> is still processed and becomes C<%m> in L<Log4perl>'s format
 placeholders. This allows you to pass L<Dancer> placeholders that aren't
 available as L<Log4perl> placeholders.
 
-L<Dancer>'s C<core> level messages are passed to L<Log4perl> as level C<debug>
+L<Dancer>'s C<core> level messages are passed to L<Log4perl> as level C<trace>
 but will not be passed unless L<Dancer>'s C<log> config is C<core>.
 
 C<log> should be set a lower priority than the lowest priority as set in your
@@ -240,6 +241,7 @@ file:
 
    # config.yml
    logger: log4perl
+   log: info
    log4perl:
       config_file: log4perl.conf
 
@@ -261,6 +263,7 @@ own, so your configuration file will be bare bones:
 
    # config.yml
    logger: log4perl
+   log: info
    log4perl:
       no_init: 1
 
@@ -307,6 +310,7 @@ options directly inside the configuration file:
 
    # config.yml
    logger: log4perl
+   log: debug
    log4perl:
       tiny: 1
       level: DEBUG
@@ -330,6 +334,7 @@ configuration file to a minimum:
 
    # config.yml
    logger: log4perl
+   log: info
    log4perl:
       tiny: 1
 
