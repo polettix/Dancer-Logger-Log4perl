@@ -61,7 +61,9 @@ sub _log {
     $level = 'trace' if $level eq 'core';
     my $format_level = $level;
 
-    # Adjust the caller level since we've introduced additional levels. Does not apply to Tiny module.
+    # Adjust the caller level since we've introduced additional levels.
+    # Note that Log::Log4perl::Tiny does not support adjusting the caller
+    # depth so caller info from Tiny's layout placeholders will be incorrect.
     local $Log::Log4perl::caller_depth = $Log::Log4perl::caller_depth + 3 if $self->{class} eq 'Log::Log4perl';
 
     $self->{logger}->$level($self->format_message($format_level => $message));
