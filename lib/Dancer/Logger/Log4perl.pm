@@ -115,8 +115,7 @@ C<logger_format> is still processed and becomes C<%m> in L<Log4perl>'s format
 placeholders. This allows you to pass L<Dancer> placeholders that aren't
 available as L<Log4perl> placeholders.
 
-L<Dancer>'s C<core> level messages are passed to L<Log4perl> as level C<trace>
-but will not be passed unless L<Dancer>'s C<log> config is C<core>.
+L<Dancer>'s C<core> level messages are passed to L<Log4perl> as level C<trace>.
 
 C<log> should be set a lower priority than the lowest priority as set in your
 L<Log4perl> configuration. If it isn't, L<Dancer::Logger::Abstract> will not
@@ -258,7 +257,7 @@ In your code:
 
 If you want to use L<Log::Log4perl>'s stealth interface, chances are you
 also want to avoid a full configuration file and rely upon C<easy_init()>.
-In this case, you will probably want to perform the initialisation by your
+In this case, you will probably want to perform the initialisation on your
 own, so your configuration file will be bare bones:
 
    # config.yml
